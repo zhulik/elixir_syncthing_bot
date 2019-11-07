@@ -24,7 +24,8 @@ defmodule ElixirSyncthingBot.MixProject do
     [
       {:tesla, "~> 1.3"},
       {:poison, "~> 4.0"},
-      {:ex_cli, "~> 0.1.0"}
+      {:ex_cli, "~> 0.1.0"},
+      {:credo, "~> 1.1.5", only: [:dev, :test], runtime: false},
     ]
   end
 end
