@@ -33,6 +33,8 @@ defmodule ElixirSyncthingBot.Main do
       servers
       |> Enum.map(fn server -> {ElixirSyncthingBot.Syncthing.Api.EventListener, server} end)
 
+    children = children ++ [ElixirSyncthingBot.Notifiers.Console]
+
     opts = [strategy: :one_for_one, name: ElixirSyncthingBot.Supervisor]
     Supervisor.start_link(children, opts)
     :timer.sleep(:infinity)
