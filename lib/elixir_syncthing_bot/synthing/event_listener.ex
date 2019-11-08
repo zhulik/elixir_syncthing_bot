@@ -1,7 +1,13 @@
 defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
   use GenServer
 
-  require Logger
+  defmacrop log(msg) do
+    quote do
+      require Logger
+
+      Logger.info(unquote(msg) <> " #{__MODULE__} #{var!(state).host}")
+    end
+  end
 
   def start_link(default) do
     GenServer.start_link(__MODULE__, default)
@@ -11,25 +17,30 @@ defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
   def init(host: host, token: token) do
     GenServer.cast(self(), :run)
 
-    {:ok,
-     %{
-       client: ElixirSyncthingBot.Syncthing.Api.client(host: host, token: token),
-       since: nil
-     }}
+    state = %{
+      host: host,
+      client: ElixirSyncthingBot.Syncthing.Api.client(host: host, token: token),
+      since: nil
+    }
+
+    log("Starting...")
+
+    {:ok, state}
   end
 
   @impl true
   def handle_cast(:run, state) do
-    Logger.info("Requesting events...")
+    log("Requesting events...")
 
     state =
       case ElixirSyncthingBot.Syncthing.Api.events(state.client, state.since) do
         {:ok, %Tesla.Env{status: 200, body: events}} ->
-          Logger.info("Got #{Enum.count(events)} events")
+          log("Got #{Enum.count(events)} events")
           %{state | since: Enum.at(events, -1).id}
 
         {:error, :timeout} ->
           state
+
         {:error, data} ->
           state
       end

@@ -5,3 +5,4 @@ PreCommit:
 
  TrailingWhitespace:
    enabled: true
+   exclude: Makefile
