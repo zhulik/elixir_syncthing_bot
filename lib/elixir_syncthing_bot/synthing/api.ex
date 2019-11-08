@@ -20,4 +20,12 @@ defmodule ElixirSyncthingBot.Syncthing.Api do
   def events(client, since \\ nil) do
     Tesla.get(client, "/rest/events", query: [since: since])
   end
+
+  def status(client) do
+    Tesla.get(client, "/rest/system/status")
+  end
+
+  def config(client) do
+    Tesla.get(client, "/rest/system/status")
+  end
 end

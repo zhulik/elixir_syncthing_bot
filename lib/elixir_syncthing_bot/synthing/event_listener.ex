@@ -37,7 +37,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
 
     state =
       case Api.events(state.client, state.since) do
-        {:ok, %Tesla.Env{status: 200, body: events}} ->
+        {:ok, %{status: 200, body: events}} ->
           log("Got #{Enum.count(events)} events")
           Notifier.process!(events)
           %{state | since: Enum.at(events, -1).id}
