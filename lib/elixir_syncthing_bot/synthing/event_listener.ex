@@ -1,7 +1,7 @@
 defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
   use GenServer
 
-  alias ElixirSyncthingBot.Notifiers.Console, as: Console
+  alias ElixirSyncthingBot.Notifiers.Notifier, as: Notifier
   alias ElixirSyncthingBot.Syncthing.Api, as: Api
 
   defmacrop log(msg) do
@@ -39,7 +39,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
       case Api.events(state.client, state.since) do
         {:ok, %Tesla.Env{status: 200, body: events}} ->
           log("Got #{Enum.count(events)} events")
-          Console.process!(events)
+          Notifier.process!(events)
           %{state | since: Enum.at(events, -1).id}
 
         {:error, :timeout} ->

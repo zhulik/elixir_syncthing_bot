@@ -1,6 +1,4 @@
 defmodule ElixirSyncthingBot.Notifiers.Console do
-  @important_events ["FolderSummary", "LoginAttempt"]
-
   use GenServer
 
   defmacrop log(msg) do
@@ -20,10 +18,6 @@ defmodule ElixirSyncthingBot.Notifiers.Console do
     {:ok, []}
   end
 
-  def process!(events) do
-    GenServer.cast(:notifier, {:process, events})
-  end
-
   def handle_cast({:process, events}, state) do
     log("Received #{Enum.count(events)}")
     process_events!(events)
@@ -31,20 +25,18 @@ defmodule ElixirSyncthingBot.Notifiers.Console do
   end
 
   defp process_events!(events) do
-    important_events =
-      events
-      |> Enum.filter(fn event -> Enum.member?(@important_events, event.type) end)
-      |> Enum.map(&process_event!/1)
+    events
+    |> Enum.map(&process_event!/1)
   end
 
   defp process_event!(%{type: "LoginAttempt"} = event) do
-    log("LoginAttempt!")
+    log("LoginAttempt! username: #{event.data.username} success: #{event.data.success}")
   end
 
   defp process_event!(%{type: "FolderSummary"} = event) do
     log("FolderSummary!")
   end
 
-  # defp process_event!(event) do
-  # end
+  defp process_event!(_event) do
+  end
 end

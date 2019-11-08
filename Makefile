@@ -7,5 +7,8 @@ elixir_syncthing_bot: format
 format:
 	mix format
 
+lint:
+	mix credo --strict
+
 run: elixir_syncthing_bot 
 	./elixir_syncthing_bot
