@@ -26,6 +26,6 @@ defmodule ElixirSyncthingBot.Syncthing.Api do
   end
 
   def config(client) do
-    Tesla.get(client, "/rest/system/status")
+    Tesla.get(client, "/rest/system/config")
   end
 end

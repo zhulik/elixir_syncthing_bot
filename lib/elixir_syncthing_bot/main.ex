@@ -2,6 +2,7 @@ defmodule ElixirSyncthingBot.Main do
   use ExCLI.DSL, escript: true
 
   alias ElixirSyncthingBot.Notifiers.Notifier, as: Notifier
+  alias ElixirSyncthingBot.Syncthing.Api.ConfigListener, as: ConfigListener
   alias ElixirSyncthingBot.Syncthing.Api.EventListener, as: EventListener
 
   name("elixir_syncthing_bot")
@@ -34,12 +35,12 @@ defmodule ElixirSyncthingBot.Main do
 
     children =
       servers
-      |> Enum.map(fn server -> {EventListener, server} end)
+      |> Enum.flat_map(fn server -> [{EventListener, server}, {ConfigListener, server}] end)
 
-    children = children ++ [Notifier.notifier(notifier)]
+    children = children ++ [Notifier.notifier(notifier, notifier_options)]
 
     opts = [strategy: :one_for_one, name: ElixirSyncthingBot.Supervisor]
     Supervisor.start_link(children, opts)
-    :timer.sleep(:infinity)
+    Process.sleep(:infinity)
   end
 end

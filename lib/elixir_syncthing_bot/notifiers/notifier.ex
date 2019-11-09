@@ -1,5 +1,5 @@
 defmodule ElixirSyncthingBot.Notifiers.Notifier do
-  def notifier(:console) do
+  def notifier(:console, _options) do
     ElixirSyncthingBot.Notifiers.Console
   end
 

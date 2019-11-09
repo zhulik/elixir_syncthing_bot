@@ -34,7 +34,7 @@ defmodule ElixirSyncthingBot.Notifiers.Console do
   end
 
   defp process_event!(%{type: "FolderSummary"} = event) do
-    log("FolderSummary!")
+    # log("FolderSummary!")
   end
 
   defp process_event!(_event) do
