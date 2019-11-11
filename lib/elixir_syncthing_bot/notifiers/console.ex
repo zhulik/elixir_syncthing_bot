@@ -4,6 +4,15 @@ defmodule ElixirSyncthingBot.Notifiers.Console do
   alias ElixirSyncthingBot.Notifiers.FoldersState
   alias ElixirSyncthingBot.Syncthing.Api.Config
 
+  @summary_message """
+  <%= for {server, folders} <- state do %>
+  <%= server.name %>
+  <%= for {folder, progress} <- folders do %>
+    <%= folder.name %> <%= ElixirSyncthingBot.Notifiers.Progress.render(progress.current, progress.total, 20)%>
+  <% end %>
+  <% end %>
+  """
+
   defmacrop log(msg) do
     quote do
       require Logger
@@ -39,7 +48,8 @@ defmodule ElixirSyncthingBot.Notifiers.Console do
 
   defp process_event!(config: config, event: %{type: "FolderSummary"} = event) do
     log("FolderSummary!")
-    notify_folders_state(FoldersState.add_event(config, event))
+    folders_state = FoldersState.add_event(config, event)
+    notify_folders_state(folders_state)
   end
 
   defp process_event!(_event) do
@@ -53,6 +63,11 @@ defmodule ElixirSyncthingBot.Notifiers.Console do
     IO.puts("Unsuccessful login attempt at #{Config.my_name(config)} as #{username}!")
   end
 
+  defp notify_folders_state(state) when state == %{} do
+    IO.puts("Syncrhonization finished!")
+  end
+
   defp notify_folders_state(state) do
+    IO.puts(EEx.eval_string(@summary_message, state: state))
   end
 end
