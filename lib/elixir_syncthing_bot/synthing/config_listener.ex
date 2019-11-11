@@ -13,8 +13,10 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConfigListener do
     end
   end
 
-  def start_link(default) do
-    GenServer.start_link(__MODULE__, default)
+  def start_link(server) do
+    GenServer.start_link(__MODULE__, server,
+      name: {:via, Registry, {Registry.Servers, "#{server[:host]}.config"}}
+    )
   end
 
   @impl true
@@ -33,6 +35,10 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConfigListener do
     {:ok, state}
   end
 
+  def get(name) do
+    GenServer.call(name, :get)
+  end
+
   @impl true
   def handle_cast(:update, state) do
     log("Updating config...")
@@ -40,6 +46,11 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConfigListener do
     config = config(state.client, state.config, state.status)
 
     {:noreply, Map.merge(state, config)}
+  end
+
+  @impl true
+  def handle_call(:get, _from, state) do
+    {:reply, Map.take(state, [:config, :status]), state}
   end
 
   @impl true

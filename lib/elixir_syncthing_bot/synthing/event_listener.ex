@@ -3,6 +3,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
 
   alias ElixirSyncthingBot.Notifiers.Notifier, as: Notifier
   alias ElixirSyncthingBot.Syncthing.Api, as: Api
+  alias ElixirSyncthingBot.Syncthing.Api.ConfigListener, as: ConfigListener
 
   defmacrop log(msg) do
     quote do
@@ -12,8 +13,10 @@ defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
     end
   end
 
-  def start_link(default) do
-    GenServer.start_link(__MODULE__, default)
+  def start_link(server) do
+    GenServer.start_link(__MODULE__, server,
+      name: {:via, Registry, {Registry.Servers, "#{server[:host]}.events"}}
+    )
   end
 
   @impl true
@@ -39,6 +42,10 @@ defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
       case Api.events(state.client, state.since) do
         {:ok, %{status: 200, body: events}} ->
           log("Got #{Enum.count(events)} events")
+
+          config =
+            ConfigListener.get({:via, Registry, {Registry.Servers, "#{state.host}.config"}})
+
           Notifier.process!(events)
           %{state | since: Enum.at(events, -1).id}
 

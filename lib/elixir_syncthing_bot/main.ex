@@ -25,6 +25,11 @@ defmodule ElixirSyncthingBot.Main do
   end
 
   def __run__(:run, %{servers: servers, notifier: notifier, notifier_options: notifier_options}) do
+    children = [
+      {Registry, [keys: :unique, name: Registry.Servers]},
+      Notifier.notifier(notifier, notifier_options)
+    ]
+
     servers =
       servers
       |> String.split(";")
@@ -34,10 +39,9 @@ defmodule ElixirSyncthingBot.Main do
       end)
 
     children =
-      servers
-      |> Enum.flat_map(fn server -> [{EventListener, server}, {ConfigListener, server}] end)
-
-    children = children ++ [Notifier.notifier(notifier, notifier_options)]
+      children ++
+        (servers
+         |> Enum.flat_map(fn server -> [{EventListener, server}, {ConfigListener, server}] end))
 
     opts = [strategy: :one_for_one, name: ElixirSyncthingBot.Supervisor]
     Supervisor.start_link(children, opts)
