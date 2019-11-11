@@ -40,8 +40,9 @@ defmodule ElixirSyncthingBot.Main do
 
     children =
       children ++
-        (servers
-         |> Enum.flat_map(fn server -> [{EventListener, server}, {ConfigListener, server}] end))
+        Enum.flat_map(servers, fn server ->
+          [{EventListener, server}, {ConfigListener, server}]
+        end)
 
     opts = [strategy: :one_for_one, name: ElixirSyncthingBot.Supervisor]
     Supervisor.start_link(children, opts)

@@ -43,10 +43,12 @@ defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
         {:ok, %{status: 200, body: events}} ->
           log("Got #{Enum.count(events)} events")
 
-          config =
-            ConfigListener.get({:via, Registry, {Registry.Servers, "#{state.host}.config"}})
+          config = ConfigListener.get(state.host)
 
-          Notifier.process!(events)
+          events
+          |> Enum.map(fn event -> [config: config, event: event] end)
+          |> Notifier.process!()
+
           %{state | since: Enum.at(events, -1).id}
 
         {:error, :timeout} ->

@@ -2,6 +2,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConfigListener do
   use GenServer
 
   alias ElixirSyncthingBot.Syncthing.Api, as: Api
+  alias ElixirSyncthingBot.Syncthing.Api.Config, as: Config
 
   @delay 10_000
 
@@ -14,9 +15,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConfigListener do
   end
 
   def start_link(server) do
-    GenServer.start_link(__MODULE__, server,
-      name: {:via, Registry, {Registry.Servers, "#{server[:host]}.config"}}
-    )
+    GenServer.start_link(__MODULE__, server, name: name(server[:host]))
   end
 
   @impl true
@@ -35,8 +34,8 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConfigListener do
     {:ok, state}
   end
 
-  def get(name) do
-    GenServer.call(name, :get)
+  def get(host) do
+    GenServer.call(name(host), :get)
   end
 
   @impl true
@@ -62,7 +61,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConfigListener do
   def config(client, current_config, current_status) do
     case request_config(client, current_config, current_status) do
       [ok: config, ok: status] -> %{config: config, status: status}
-      _ -> %{config: current_config, status: current_status}
+      _ -> %Config{config: current_config, status: current_status}
     end
   end
 
@@ -76,7 +75,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConfigListener do
   end
 
   defp config(client, current_config) do
-    case ElixirSyncthingBot.Syncthing.Api.config(client) do
+    case Api.config(client) do
       {:ok, %{status: 200, body: config}} ->
         config
 
@@ -86,12 +85,16 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConfigListener do
   end
 
   defp status(client, current_status) do
-    case ElixirSyncthingBot.Syncthing.Api.status(client) do
+    case Api.status(client) do
       {:ok, %{status: 200, body: status}} ->
         status
 
       {:error, _data} ->
         current_status
     end
+  end
+
+  defp name(host) do
+    {:via, Registry, {Registry.Servers, "#{host}.config"}}
   end
 end

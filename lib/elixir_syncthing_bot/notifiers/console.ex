@@ -29,12 +29,12 @@ defmodule ElixirSyncthingBot.Notifiers.Console do
     |> Enum.map(&process_event!/1)
   end
 
-  defp process_event!(%{type: "LoginAttempt"} = event) do
+  defp process_event!(config: config, event: %{type: "LoginAttempt"} = event) do
     log("LoginAttempt! username: #{event.data.username} success: #{event.data.success}")
   end
 
-  defp process_event!(%{type: "FolderSummary"} = event) do
-    # log("FolderSummary!")
+  defp process_event!(config: config, event: %{type: "FolderSummary"} = event) do
+    log("FolderSummary!")
   end
 
   defp process_event!(_event) do
