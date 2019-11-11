@@ -10,7 +10,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api.Config do
   end
 
   def device_name(config, id) do
-    Enum.find(config.config.devices, fn d -> d.id == id end).name
+    Enum.find(config.config.devices, fn d -> d.deviceID == id end).name
   end
 
   def folder_name(config, id) do

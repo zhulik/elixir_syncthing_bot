@@ -1,6 +1,8 @@
 defmodule ElixirSyncthingBot.Notifiers.Console do
   use GenServer
 
+  alias ElixirSyncthingBot.Syncthing.Api.Config, as: Config
+
   defmacrop log(msg) do
     quote do
       require Logger
@@ -31,6 +33,7 @@ defmodule ElixirSyncthingBot.Notifiers.Console do
 
   defp process_event!(config: config, event: %{type: "LoginAttempt"} = event) do
     log("LoginAttempt! username: #{event.data.username} success: #{event.data.success}")
+    notify_login_attempt(config, event)
   end
 
   defp process_event!(config: config, event: %{type: "FolderSummary"} = event) do
@@ -38,5 +41,13 @@ defmodule ElixirSyncthingBot.Notifiers.Console do
   end
 
   defp process_event!(_event) do
+  end
+
+  def notify_login_attempt(config, %{data: %{success: true, username: username} = data}) do
+    IO.puts("Successful login attempt at #{Config.my_name(config)} as #{username}!")
+  end
+
+  def notify_login_attempt(config, %{data: %{success: false, username: username}}) do
+    IO.puts("Insuccessful login attempt at #{Config.my_name(config)} as #{username}!")
   end
 end

@@ -58,7 +58,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConfigListener do
     {:noreply, state}
   end
 
-  def config(client, current_config, current_status) do
+  defp config(client, current_config, current_status) do
     case request_config(client, current_config, current_status) do
       [ok: config, ok: status] -> %{config: config, status: status}
       _ -> %Config{config: current_config, status: current_status}
