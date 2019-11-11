@@ -1,9 +1,11 @@
 defmodule ElixirSyncthingBot.Main do
   use ExCLI.DSL, escript: true
 
-  alias ElixirSyncthingBot.Notifiers.Notifier, as: Notifier
-  alias ElixirSyncthingBot.Syncthing.Api.ConfigListener, as: ConfigListener
-  alias ElixirSyncthingBot.Syncthing.Api.EventListener, as: EventListener
+  alias ElixirSyncthingBot.Notifiers.FoldersState
+  alias ElixirSyncthingBot.Notifiers.Notifier
+
+  alias ElixirSyncthingBot.Syncthing.Api.ConfigListener
+  alias ElixirSyncthingBot.Syncthing.Api.EventListener
 
   name("elixir_syncthing_bot")
 
@@ -27,6 +29,7 @@ defmodule ElixirSyncthingBot.Main do
   def __run__(:run, %{servers: servers, notifier: notifier, notifier_options: notifier_options}) do
     children = [
       {Registry, [keys: :unique, name: Registry.Servers]},
+      FoldersState,
       Notifier.notifier(notifier, notifier_options)
     ]
 

@@ -1,8 +1,8 @@
 defmodule ElixirSyncthingBot.Syncthing.Api.ConfigListener do
   use GenServer
 
-  alias ElixirSyncthingBot.Syncthing.Api, as: Api
-  alias ElixirSyncthingBot.Syncthing.Api.Config, as: Config
+  alias ElixirSyncthingBot.Syncthing.Api
+  alias ElixirSyncthingBot.Syncthing.Api.Config
 
   @delay 10_000
 

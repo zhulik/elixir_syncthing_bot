@@ -1,9 +1,9 @@
 defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
   use GenServer
 
-  alias ElixirSyncthingBot.Notifiers.Notifier, as: Notifier
-  alias ElixirSyncthingBot.Syncthing.Api, as: Api
-  alias ElixirSyncthingBot.Syncthing.Api.ConfigListener, as: ConfigListener
+  alias ElixirSyncthingBot.Notifiers.Notifier
+  alias ElixirSyncthingBot.Syncthing.Api
+  alias ElixirSyncthingBot.Syncthing.Api.ConfigListener
 
   defmacrop log(msg) do
     quote do
