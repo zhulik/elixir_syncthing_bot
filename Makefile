@@ -1,4 +1,4 @@
-.PHONY: elixir_syncthing_bot
+.PHONY: elixir_syncthing_bot test
 
 elixir_syncthing_bot: format
 	mix deps.get
@@ -7,8 +7,11 @@ elixir_syncthing_bot: format
 format:
 	mix format
 
-lint:
+lint: format
 	mix credo --strict
+
+test: format
+	mix test
 
 run: elixir_syncthing_bot 
 	./elixir_syncthing_bot
