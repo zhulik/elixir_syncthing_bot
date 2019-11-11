@@ -39,7 +39,7 @@ defmodule ElixirSyncthingBot.Notifiers.Console do
 
   defp process_event!(config: config, event: %{type: "FolderSummary"} = event) do
     log("FolderSummary!")
-    FoldersState.add_event(config, event)
+    notify_folders_state(FoldersState.add_event(config, event))
   end
 
   defp process_event!(_event) do
@@ -51,5 +51,8 @@ defmodule ElixirSyncthingBot.Notifiers.Console do
 
   def notify_login_attempt(config, %{data: %{success: false, username: username}}) do
     IO.puts("Unsuccessful login attempt at #{Config.my_name(config)} as #{username}!")
+  end
+
+  defp notify_folders_state(state) do
   end
 end
