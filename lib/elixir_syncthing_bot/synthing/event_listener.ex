@@ -15,7 +15,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
 
   def start_link(server) do
     GenServer.start_link(__MODULE__, server,
-      name: {:via, Registry, {Registry.Servers, "#{server[:host]}.events"}}
+      name: {:via, Registry, {Registry.ElixirSyncthingBot, "#{server[:host]}.events"}}
     )
   end
 
@@ -39,30 +39,31 @@ defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
     log("Requesting events...")
 
     state =
-      case Api.events(state.client, state.since) do
-        {:ok, %{status: 200, body: events}} ->
-          log("Got #{Enum.count(events)} events")
-
-          config = ConfigListener.get(state.host)
-
-          events
-          |> Enum.map(fn event -> [config: config, event: event] end)
-          |> Notifier.process!()
-
-          %{state | since: Enum.at(events, -1).id}
-
-        {:error, :timeout} ->
-          state
-
-        {:error, :econnrefused} ->
-          :timer.sleep(10_000)
-          state
-
-        {:error, data} ->
-          state
-      end
+      Api.events(state.client, state.since)
+      |> process_events(state)
 
     GenServer.cast(self(), :run)
     {:noreply, state}
+  end
+
+  defp process_events({:ok, %{status: 200, body: events}}, state) do
+    log("Got #{Enum.count(events)} events")
+
+    config = ConfigListener.get(state.host)
+
+    events
+    |> Enum.map(fn event -> [config: config, event: event] end)
+    |> Notifier.process!()
+
+    %{state | since: Enum.at(events, -1).id}
+  end
+
+  defp process_events({:error, {:error, :econnrefused}}, state) do
+    Process.sleep(10_000)
+    state
+  end
+
+  defp process_events({:error, _}, state) do
+    state
   end
 end

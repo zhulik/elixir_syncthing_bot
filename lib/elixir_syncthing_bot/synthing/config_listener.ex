@@ -95,6 +95,6 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConfigListener do
   end
 
   defp name(host) do
-    {:via, Registry, {Registry.Servers, "#{host}.config"}}
+    {:via, Registry, {Registry.ElixirSyncthingBot, "#{host}.config"}}
   end
 end

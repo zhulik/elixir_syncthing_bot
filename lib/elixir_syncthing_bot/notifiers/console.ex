@@ -22,7 +22,9 @@ defmodule ElixirSyncthingBot.Notifiers.Console do
   end
 
   def start_link(_) do
-    GenServer.start_link(__MODULE__, :ok, name: :notifier)
+    GenServer.start_link(__MODULE__, :ok,
+      name: {:via, Registry, {Registry.ElixirSyncthingBot, :notifier}}
+    )
   end
 
   def init(:ok) do
@@ -37,8 +39,7 @@ defmodule ElixirSyncthingBot.Notifiers.Console do
   end
 
   defp process_events!(events) do
-    events
-    |> Enum.map(&process_event!/1)
+    Enum.map(events, &process_event!/1)
   end
 
   defp process_event!(config: config, event: %{type: "LoginAttempt"} = event) do

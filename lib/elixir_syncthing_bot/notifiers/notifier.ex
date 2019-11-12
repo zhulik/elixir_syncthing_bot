@@ -4,6 +4,6 @@ defmodule ElixirSyncthingBot.Notifiers.Notifier do
   end
 
   def process!(events) do
-    GenServer.cast(:notifier, {:process, events})
+    GenServer.cast({:via, Registry, {Registry.ElixirSyncthingBot, :notifier}}, {:process, events})
   end
 end

@@ -28,7 +28,7 @@ defmodule ElixirSyncthingBot.Main do
 
   def __run__(:run, %{servers: servers, notifier: notifier, notifier_options: notifier_options}) do
     children = [
-      {Registry, [keys: :unique, name: Registry.Servers]},
+      {Registry, [keys: :unique, name: Registry.ElixirSyncthingBot]},
       FoldersState,
       Notifier.notifier(notifier, notifier_options)
     ]
@@ -40,15 +40,13 @@ defmodule ElixirSyncthingBot.Main do
       |> Enum.map(fn uri ->
         [host: "#{uri.scheme}://#{uri.host}:#{uri.port}/#{uri.query}", token: uri.userinfo]
       end)
-
-    children =
-      children ++
-        Enum.flat_map(servers, fn server ->
-          [{EventListener, server}, {ConfigListener, server}]
-        end)
+      |> Enum.flat_map(fn server ->
+        [{EventListener, server}, {ConfigListener, server}]
+      end)
 
     opts = [strategy: :one_for_one, name: ElixirSyncthingBot.Supervisor]
-    Supervisor.start_link(children, opts)
+
+    Supervisor.start_link(children ++ servers, opts)
     Process.sleep(:infinity)
   end
 end
