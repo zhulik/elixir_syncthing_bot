@@ -21,10 +21,11 @@ defmodule ElixirSyncthingBot.Notifiers.FoldersState do
     device_key = %{id: Config.my_id(config), name: Config.my_name(config)}
     folder_key = %{id: event.data.folder, name: Config.folder_name(config, event.data.folder)}
 
-    state
-    |> Map.put_new(device_key, %{})
-    |> apply_event(device_key, folder_key, event)
-    |> cleanup_state
+    state =
+      state
+      |> Map.put_new(device_key, %{})
+      |> apply_event(device_key, folder_key, event)
+      |> cleanup_state
 
     {:reply, state, state}
   end

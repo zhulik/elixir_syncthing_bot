@@ -20,7 +20,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConfigListener do
 
   @impl true
   def init(host: host, token: token) do
-    GenServer.cast(self(), :update)
+    Process.send(self(), :update, [])
 
     state = %{
       host: host,
@@ -39,23 +39,17 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConfigListener do
   end
 
   @impl true
-  def handle_cast(:update, state) do
-    log("Updating config...")
-    Process.send_after(self(), :update, @delay)
-    config = config(state.client, state.config, state.status)
-
-    {:noreply, Map.merge(state, config)}
-  end
-
-  @impl true
   def handle_call(:get, _from, state) do
     {:reply, Map.take(state, [:config, :status]), state}
   end
 
   @impl true
   def handle_info(:update, state) do
-    GenServer.cast(self(), :update)
-    {:noreply, state}
+    log("Updating config...")
+    config = config(state.client, state.config, state.status)
+    Process.send_after(self(), :update, @delay)
+
+    {:noreply, Map.merge(state, config)}
   end
 
   defp config(client, current_config, current_status) do
