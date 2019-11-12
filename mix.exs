@@ -15,7 +15,8 @@ defmodule ElixirSyncthingBot.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :tesla, :eex]
+      extra_applications: [:logger, :tesla, :eex],
+      mod: {ElixirSyncthingBot, []}
     ]
   end
 
