@@ -1,4 +1,4 @@
 import Config
 
-config :logger, :console, format: "$time [$level] $metadata $levelpad$message\n"
+config :logger, :console, format: {ElixirSyncthingBot.ColorLogger, :format}
 config :tesla, Tesla.Middleware.Logger, debug: false
