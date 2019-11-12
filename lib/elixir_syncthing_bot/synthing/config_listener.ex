@@ -20,16 +20,20 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConfigListener do
 
   @impl true
   def init(host: host, token: token) do
-    Process.send(self(), :update, [])
+    client = Api.client(host: host, token: token)
+
+    [ok: config, ok: status] = request_config!(client)
 
     state = %{
       host: host,
-      client: Api.client(host: host, token: token),
-      config: {},
-      status: {}
+      client: client,
+      config: config,
+      status: status
     }
 
     log("Starting...")
+
+    Process.send_after(self(), :update, @delay)
 
     {:ok, state}
   end
@@ -68,9 +72,24 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConfigListener do
     |> Enum.to_list()
   end
 
+  defp request_config!(client) do
+    [
+      fn ->
+        {:ok, config} = Api.config(client)
+        config
+      end,
+      fn ->
+        {:ok, status} = Api.status(client)
+        status
+      end
+    ]
+    |> Task.async_stream(fn f -> f.() end)
+    |> Enum.to_list()
+  end
+
   defp config(client, current_config) do
     case Api.config(client) do
-      {:ok, %{status: 200, body: config}} ->
+      {:ok, config} ->
         config
 
       {:error, _data} ->
@@ -80,7 +99,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConfigListener do
 
   defp status(client, current_status) do
     case Api.status(client) do
-      {:ok, %{status: 200, body: status}} ->
+      {:ok, status} ->
         status
 
       {:error, _data} ->

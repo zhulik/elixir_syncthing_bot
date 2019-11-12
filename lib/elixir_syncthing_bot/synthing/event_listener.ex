@@ -23,10 +23,14 @@ defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
   def init(host: host, token: token) do
     GenServer.cast(self(), :run)
 
+    client = Api.client(host: host, token: token)
+
+    {:ok, events} = Api.events(client)
+
     state = %{
       host: host,
-      client: Api.client(host: host, token: token),
-      since: nil
+      client: client,
+      since: Enum.at(events, -1).id
     }
 
     log("Starting...")
@@ -46,7 +50,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
     {:noreply, state}
   end
 
-  defp process_events({:ok, %{status: 200, body: events}}, state) do
+  defp process_events({:ok, events}, state) do
     log("Got #{Enum.count(events)} events")
 
     config = ConfigListener.get(state.host)
@@ -58,7 +62,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
     %{state | since: Enum.at(events, -1).id}
   end
 
-  defp process_events({:error, {:error, :econnrefused}}, state) do
+  defp process_events({:error, :econnrefused}, state) do
     Process.sleep(10_000)
     state
   end

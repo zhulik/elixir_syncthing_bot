@@ -41,7 +41,7 @@ defmodule ElixirSyncthingBot.Main do
         [host: "#{uri.scheme}://#{uri.host}:#{uri.port}/#{uri.query}", token: uri.userinfo]
       end)
       |> Enum.flat_map(fn server ->
-        [{EventListener, server}, {ConfigListener, server}]
+        [{ConfigListener, server}, {EventListener, server}]
       end)
 
     opts = [strategy: :one_for_one, name: ElixirSyncthingBot.Supervisor]
