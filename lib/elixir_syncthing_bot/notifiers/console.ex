@@ -8,7 +8,7 @@ defmodule ElixirSyncthingBot.Notifiers.Console do
   <%= for {server, folders} <- state do %>
   <%= server.name %>
   <%= for {folder, progress} <- folders do %>
-    <%= folder.name %> <%= ElixirSyncthingBot.Notifiers.Progress.render(progress.current, progress.total, 20)%>
+    <%= folder.name %> <%= ElixirSyncthingBot.Notifiers.Progress.render(progress.current, progress.total, 20)%> <%= ElixirSyncthingBot.Notifiers.Filesize.humanize(progress.current) %> / <%= ElixirSyncthingBot.Notifiers.Filesize.humanize(progress.total) %>
   <% end %>
   <% end %>
   """
