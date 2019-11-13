@@ -21,7 +21,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
 
   @impl true
   def init(host: host, token: token) do
-    GenServer.cast(self(), :run)
+    send(self(), :run)
 
     client = Api.client(host: host, token: token)
 
@@ -39,14 +39,14 @@ defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
   end
 
   @impl true
-  def handle_cast(:run, state) do
+  def handle_info(:run, state) do
     log("Requesting events...")
 
     state =
       Api.events(state.client, state.since)
       |> process_events(state)
 
-    GenServer.cast(self(), :run)
+    send(self(), :run)
     {:noreply, state}
   end
 

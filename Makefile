@@ -2,7 +2,7 @@
 
 elixir_syncthing_bot: format
 	mix deps.get
-	mix escript.build
+	mix run --no-halt
 
 format:
 	mix format
