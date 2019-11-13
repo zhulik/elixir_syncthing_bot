@@ -4,7 +4,9 @@ defmodule ElixirSyncthingBot.Notifiers.FoldersState do
   alias ElixirSyncthingBot.Syncthing.Api.Config
 
   def start_link(_) do
-    GenServer.start_link(__MODULE__, %{}, name: :folders_state)
+    GenServer.start_link(__MODULE__, %{},
+      name: {:via, Registry, {Registry.ElixirSyncthingBot, :folders_state}}
+    )
   end
 
   @impl true
@@ -13,7 +15,10 @@ defmodule ElixirSyncthingBot.Notifiers.FoldersState do
   end
 
   def add_event(config, event) do
-    GenServer.call(:folders_state, {:add_event, config, event})
+    GenServer.call(
+      {:via, Registry, {Registry.ElixirSyncthingBot, :folders_state}},
+      {:add_event, config, event}
+    )
   end
 
   @impl true
