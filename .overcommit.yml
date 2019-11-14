@@ -1,8 +1,8 @@
 PreCommit:
- Credo:
-   enabled: true
-   on_warn: fail # Treat all warnings as failures
+  Credo:
+    enabled: true
+    on_warn: fail # Treat all warnings as failures
 
- TrailingWhitespace:
-   enabled: true
-   exclude: Makefile
+  TrailingWhitespace:
+    enabled: true
+    exclude: Makefile
