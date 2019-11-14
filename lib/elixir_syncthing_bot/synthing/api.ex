@@ -18,7 +18,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api do
     Tesla.client(middleware)
   end
 
-  @spec events(Tesla.Client.t(), integer | nil, integer | nil) :: {:ok, term} | {:error, atom}
+  @spec events(Tesla.Client.t(), integer | nil, integer | nil) :: {:ok, [term]} | {:error, atom}
   def events(client, since \\ nil, limit \\ nil) do
     case Tesla.get(client, "/rest/events", query: [since: since, limit: limit]) do
       {:ok, %{status: 200, body: events}} ->
