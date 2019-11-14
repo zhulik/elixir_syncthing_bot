@@ -23,6 +23,5 @@ erl_crash.dump
 elixir_syncthing_bot-*.tar
 /elixir_syncthing_bot
 /config/dev.exs
-/config/test.exs
 /config/prod.exs
 
