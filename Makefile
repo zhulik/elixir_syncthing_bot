@@ -15,6 +15,8 @@ lint: format dialyzer
 test: format
 	mix test
 
+check: lint test
+
 run: elixir_syncthing_bot 
 	mix run --no-halt
 
