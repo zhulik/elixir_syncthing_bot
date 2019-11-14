@@ -22,20 +22,25 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConfigListener do
   def init(host: host, token: token) do
     client = Api.client(host: host, token: token)
 
-    [ok: config, ok: status] = request_config!(client)
-
     state = %{
       host: host,
       client: client,
-      config: config,
-      status: status
+      config: nil,
+      status: nil
     }
 
     log("Starting...")
 
     Process.send_after(self(), :update, @delay)
 
-    {:ok, state}
+    {:ok, state, {:continue, :recover_state}}
+  end
+
+  @impl true
+  def handle_continue(:recover_state, state) do
+    [ok: config, ok: status] = request_config!(state.client)
+
+    {:noreply, %{state | config: config, status: status}}
   end
 
   def get(host) do
