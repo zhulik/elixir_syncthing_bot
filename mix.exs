@@ -26,7 +26,8 @@ defmodule ElixirSyncthingBot.MixProject do
       {:poison, "~> 4.0"},
       {:ex_cli, "~> 0.1.0"},
       {:credo, "~> 1.1.5", only: [:dev, :test], runtime: false},
-      {:distillery, "~> 2.1"}
+      {:dialyxir, "~> 1.0.0-rc.7", only: [:dev], runtime: false},
+      {:distillery, "~> 2.1", only: [:dev, :test], runtime: false}
     ]
   end
 end

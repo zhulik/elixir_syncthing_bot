@@ -2,19 +2,21 @@
 
 elixir_syncthing_bot: format
 	mix deps.get
-	mix run --no-halt
 
 format:
 	mix format
 
-lint: format
+dialyzer:
+	mix dialyzer --format dialyxir --quiet
+
+lint: format dialyzer
 	mix credo --strict
 
 test: format
 	mix test
 
 run: elixir_syncthing_bot 
-	./elixir_syncthing_
+	mix run --no-halt
 
 release:
 	MIX_ENV=prod mix distillery.release

@@ -7,6 +7,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api do
     {Tesla.Middleware.Timeout, timeout: 30_000}
   ]
 
+  @spec client(host: String.t, token: String.t) :: Tesla.Client.t
   def client(host: host, token: token) do
     middleware =
       [
@@ -17,6 +18,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api do
     Tesla.client(middleware)
   end
 
+  @spec events(Tesla.Client.t, integer | nil, integer | nil) :: {:ok, term} | {:error, atom}
   def events(client, since \\ nil, limit \\ nil) do
     case Tesla.get(client, "/rest/events", query: [since: since, limit: limit]) do
       {:ok, %{status: 200, body: events}} ->
@@ -27,6 +29,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api do
     end
   end
 
+  @spec status(Tesla.Client.t) :: {:ok, term} | {:error, atom}
   def status(client) do
     case Tesla.get(client, "/rest/system/status") do
       {:ok, %{status: 200, body: config}} ->
@@ -37,6 +40,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api do
     end
   end
 
+  @spec config(Tesla.Client.t) :: {:ok, term} | {:error, atom}
   def config(client) do
     case Tesla.get(client, "/rest/system/config") do
       {:ok, %{status: 200, body: status}} ->
