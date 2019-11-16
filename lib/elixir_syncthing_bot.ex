@@ -21,17 +21,16 @@ defmodule ElixirSyncthingBot do
 
     res = Supervisor.start_link(children, opts)
 
-    System.get_env("SERVERS") ||
-      ""
-      |> String.trim()
-      |> String.split(";")
-      |> Enum.map(&String.trim/1)
-      |> Enum.filter(fn server -> server != "" end)
-      |> Enum.map(&URI.parse/1)
-      |> Enum.map(fn uri ->
-        [host: "#{uri.scheme}://#{uri.host}:#{uri.port}/#{uri.query}", token: uri.userinfo]
-      end)
-      |> Enum.each(&ServersSupervisor.add_server/1)
+    (System.get_env("SERVERS") || "")
+    |> String.trim()
+    |> String.split(";")
+    |> Enum.map(&String.trim/1)
+    |> Enum.filter(fn server -> server != "" end)
+    |> Enum.map(&URI.parse/1)
+    |> Enum.map(fn uri ->
+      [host: "#{uri.scheme}://#{uri.host}:#{uri.port}/#{uri.query}", token: uri.userinfo]
+    end)
+    |> Enum.each(&ServersSupervisor.add_server/1)
 
     res
   end
