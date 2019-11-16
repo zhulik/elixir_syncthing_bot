@@ -2,6 +2,7 @@ on: push
 
 jobs:
   test:
+    name: Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1.0.0
@@ -21,11 +22,10 @@ jobs:
           restore-keys: ${{ runner.os }}-mix-build-
       - run: mix deps.get
       - run: make check
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1.0.0
-      - run: make docker
-      - run: |
+      - run: make release
+      - name: Deploy
+        if: github.ref == 'master'
+        run: |
+          make docker
           docker login docker.pkg.github.com -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} && \
           docker push docker.pkg.github.com/zhulik/elixir_syncthing_bot/elixir_syncthing_bot:latest
