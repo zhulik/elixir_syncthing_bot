@@ -40,7 +40,7 @@ defmodule ElixirSyncthingBot.Notifiers.Notifier do
         "#{Application.app_dir(:elixir_syncthing_bot)}/priv/views/#{notifier_name()}/#{name}.eex"
       end
 
-      defp notifier_name do
+      defp notifier_name() do
         __MODULE__ |> to_string() |> String.split(".") |> List.last() |> Macro.underscore()
       end
 

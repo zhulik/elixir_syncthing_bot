@@ -23,6 +23,7 @@ defmodule ElixirSyncthingBot.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:ex_gram, "~> 0.8"},
       {:tesla, "~> 1.3"},
       {:poison, "~> 4.0"},
       {:ex_cli, "~> 0.1.0"},

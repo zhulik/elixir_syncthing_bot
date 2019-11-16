@@ -1,4 +1,4 @@
-.PHONY: elixir_syncthing_bot test release
+.PHONY: elixir_syncthing_bot test release deps
 
 elixir_syncthing_bot: format deps
 	mix compile
