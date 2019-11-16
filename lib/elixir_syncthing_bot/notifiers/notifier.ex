@@ -35,6 +35,21 @@ defmodule ElixirSyncthingBot.Notifiers.Notifier do
       defp process_events(events) do
         Enum.map(events, &process_event/1)
       end
+
+      defp view_path(name) do
+        "#{Application.app_dir(:elixir_syncthing_bot)}/priv/views/#{notifier_name()}/#{name}.eex"
+      end
+
+      defp notifier_name() do
+        __MODULE__ |> to_string() |> String.split(".") |> List.last() |> Macro.underscore()
+      end
+
+      defp render(name, args) do
+        EEx.eval_file(
+          view_path(name),
+          args
+        )
+      end
     end
   end
 

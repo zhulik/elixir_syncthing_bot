@@ -40,11 +40,6 @@ defmodule ElixirSyncthingBot.Notifiers.Console do
   end
 
   defp notify_folders_state(state) do
-    IO.puts(
-      EEx.eval_file(
-        "#{Application.app_dir(:elixir_syncthing_bot)}/priv/views/console/folder_summary_notication.eex",
-        state: state
-      )
-    )
+    IO.puts(render("folder_summary_notication", state: state))
   end
 end
