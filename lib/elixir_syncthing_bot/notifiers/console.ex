@@ -22,8 +22,14 @@ defmodule ElixirSyncthingBot.Notifiers.Console do
   @impl true
   def process_event(config: config, event: %{type: "FolderSummary"} = event) do
     log("FolderSummary!")
-    folders_state = FoldersState.add_event(config, event)
-    notify_folders_state(folders_state)
+
+    case FoldersState.add_event(config, event) do
+      {true, folders_state} ->
+        notify_folders_state(folders_state)
+
+      _ ->
+        nil
+    end
   end
 
   @impl true
