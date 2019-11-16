@@ -21,7 +21,10 @@ jobs:
           restore-keys: ${{ runner.os }}-mix-build-
       - run: mix deps.get
       - run: make check
-      - run: make release
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1.0.0
       - run: make docker
       - run: |
           docker login docker.pkg.github.com -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} && \
