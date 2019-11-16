@@ -4,15 +4,6 @@ defmodule ElixirSyncthingBot.Notifiers.Console do
   alias ElixirSyncthingBot.Notifiers.FoldersState
   alias ElixirSyncthingBot.Syncthing.Api.Config
 
-  @summary_message """
-  <%= for {server, folders} <- state do %>
-  <%= server.name %>
-  <%= for {folder, progress} <- folders do %>
-    <%= folder.name %> <%= ElixirSyncthingBot.Notifiers.Progress.render(progress.current, progress.total, 20)%> <%= ElixirSyncthingBot.Notifiers.Filesize.humanize(progress.current) %> / <%= ElixirSyncthingBot.Notifiers.Filesize.humanize(progress.total) %>
-  <% end %>
-  <% end %>
-  """
-
   @impl true
   def process_event(config: config, event: %{type: "LoginAttempt"} = event) do
     log("LoginAttempt! username: #{event.data.username} success: #{event.data.success}")
@@ -49,6 +40,11 @@ defmodule ElixirSyncthingBot.Notifiers.Console do
   end
 
   defp notify_folders_state(state) do
-    IO.puts(EEx.eval_string(@summary_message, state: state))
+    IO.puts(
+      EEx.eval_file(
+        "#{Application.app_dir(:elixir_syncthing_bot)}/priv/views/console/folder_summary_notication.eex",
+        state: state
+      )
+    )
   end
 end
