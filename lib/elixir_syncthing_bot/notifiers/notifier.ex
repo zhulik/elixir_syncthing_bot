@@ -22,18 +22,18 @@ defmodule ElixirSyncthingBot.Notifiers.Notifier do
       end
 
       def init(options) do
-        log("Starting with options #{options}..")
-        {:ok, []}
+        log("Starting with options #{inspect(options)}..")
+        {:ok, %{options: options}}
       end
 
       def handle_cast({:process, events}, state) do
         log("Received #{Enum.count(events)}")
-        process_events(events)
+        process_events(events, state)
         {:noreply, state}
       end
 
-      defp process_events(events) do
-        Enum.map(events, &process_event/1)
+      defp process_events(events, state) do
+        Enum.map(events, fn event -> process_event(event, state) end)
       end
 
       defp view_path(name) do
@@ -53,5 +53,5 @@ defmodule ElixirSyncthingBot.Notifiers.Notifier do
     end
   end
 
-  @callback process_event(term) :: term
+  @callback process_event(term, term) :: term
 end
