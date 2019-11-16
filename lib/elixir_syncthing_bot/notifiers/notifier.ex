@@ -15,14 +15,14 @@ defmodule ElixirSyncthingBot.Notifiers.Notifier do
         end
       end
 
-      def start_link(_) do
-        GenServer.start_link(__MODULE__, :ok,
+      def start_link(options) do
+        GenServer.start_link(__MODULE__, options,
           name: {:via, Registry, {Registry.ElixirSyncthingBot, :notifier}}
         )
       end
 
-      def init(:ok) do
-        log("Starting...")
+      def init(options) do
+        log("Starting with options #{options}..")
         {:ok, []}
       end
 
@@ -40,7 +40,7 @@ defmodule ElixirSyncthingBot.Notifiers.Notifier do
         "#{Application.app_dir(:elixir_syncthing_bot)}/priv/views/#{notifier_name()}/#{name}.eex"
       end
 
-      defp notifier_name() do
+      defp notifier_name do
         __MODULE__ |> to_string() |> String.split(".") |> List.last() |> Macro.underscore()
       end
 

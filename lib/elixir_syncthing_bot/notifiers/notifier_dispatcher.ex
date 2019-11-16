@@ -1,6 +1,6 @@
 defmodule ElixirSyncthingBot.Notifiers.NotifierDispatcher do
-  def notifier("console", _options) do
-    ElixirSyncthingBot.Notifiers.Console
+  def notifier("console", options) do
+    {ElixirSyncthingBot.Notifiers.Console, options}
   end
 
   def process!(events) do
