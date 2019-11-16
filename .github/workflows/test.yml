@@ -22,7 +22,6 @@ jobs:
           restore-keys: ${{ runner.os }}-mix-build-
       - run: mix deps.get
       - run: make check
-      - run: make release
       - name: Deploy
         if: github.ref == 'master'
         run: |
