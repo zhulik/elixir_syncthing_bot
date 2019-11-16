@@ -47,10 +47,19 @@ defmodule ElixirSyncthingBot.Notifiers.FoldersState do
          folder_key,
          %{data: %{summary: %{state: "syncing"}}} = event
        ) do
-    put_in(state, [device_key, folder_key], %{
-      current: event.data.summary.inSyncBytes,
-      total: event.data.summary.globalBytes
-    })
+    if state[device_key][folder_key] do
+      put_in(state, [device_key, folder_key], %{
+        state[device_key][folder_key]
+        | current: event.data.summary.inSyncBytes,
+          total: event.data.summary.globalBytes
+      })
+    else
+      put_in(state, [device_key, folder_key], %{
+        start: event.data.summary.inSyncBytes,
+        current: event.data.summary.inSyncBytes,
+        total: event.data.summary.globalBytes
+      })
+    end
   end
 
   defp apply_event(state, _device_key, _folder_key, _event) do

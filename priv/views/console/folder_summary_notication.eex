@@ -1,6 +1,6 @@
   <%= for {server, folders} <- state do %>
   <%= server.name %>
   <%= for {folder, progress} <- folders do %>
-    <%= folder.name %> <%= ElixirSyncthingBot.Notifiers.Progress.render(progress.current, progress.total, 20)%> <%= ElixirSyncthingBot.Notifiers.Filesize.humanize(progress.current) %> / <%= ElixirSyncthingBot.Notifiers.Filesize.humanize(progress.total) %>
+    <%= folder.name %> <%= ElixirSyncthingBot.Notifiers.Progress.render(progress.current - progress.start, progress.total - progress.start, 20)%> <%= ElixirSyncthingBot.Notifiers.Filesize.humanize(progress.current - progress.start) %> / <%= ElixirSyncthingBot.Notifiers.Filesize.humanize(progress.total - progress.start) %>
   <% end %>
   <% end %>

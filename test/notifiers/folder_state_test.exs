@@ -49,7 +49,11 @@ defmodule ElixirSyncthingBot.Notifiers.FoldersStateTest do
     assert {true,
             %{
               %{id: "123", name: "server"} => %{
-                %{id: "first_folder_id", name: "first_folder_name"} => %{current: 0, total: 2048}
+                %{id: "first_folder_id", name: "first_folder_name"} => %{
+                  current: 0,
+                  total: 2048,
+                  start: 0
+                }
               }
             }} == FoldersState.add_event(device1_info, event("first_folder_id", "syncing", 0))
 
@@ -58,7 +62,8 @@ defmodule ElixirSyncthingBot.Notifiers.FoldersStateTest do
               %{id: "123", name: "server"} => %{
                 %{id: "first_folder_id", name: "first_folder_name"} => %{
                   current: 1024,
-                  total: 2048
+                  total: 2048,
+                  start: 0
                 }
               }
             }} == FoldersState.add_event(device1_info, event("first_folder_id", "syncing", 1024))
@@ -68,11 +73,13 @@ defmodule ElixirSyncthingBot.Notifiers.FoldersStateTest do
               %{id: "123", name: "server"} => %{
                 %{id: "first_folder_id", name: "first_folder_name"} => %{
                   current: 1024,
-                  total: 2048
+                  total: 2048,
+                  start: 0
                 },
                 %{id: "second_folder_id", name: "second_folder_name"} => %{
                   current: 0,
-                  total: 2048
+                  total: 2048,
+                  start: 0
                 }
               }
             }} == FoldersState.add_event(device1_info, event("second_folder_id", "syncing", 0))
@@ -82,15 +89,21 @@ defmodule ElixirSyncthingBot.Notifiers.FoldersStateTest do
               %{id: "123", name: "server"} => %{
                 %{id: "first_folder_id", name: "first_folder_name"} => %{
                   current: 1024,
-                  total: 2048
+                  total: 2048,
+                  start: 0
                 },
                 %{id: "second_folder_id", name: "second_folder_name"} => %{
                   current: 0,
-                  total: 2048
+                  total: 2048,
+                  start: 0
                 }
               },
               %{id: "456", name: "server2"} => %{
-                %{id: "first_folder_id", name: "first_folder_name"} => %{current: 0, total: 2048}
+                %{id: "first_folder_id", name: "first_folder_name"} => %{
+                  current: 0,
+                  total: 2048,
+                  start: 0
+                }
               }
             }} == FoldersState.add_event(device2_info, event("first_folder_id", "syncing", 0))
 
@@ -99,11 +112,16 @@ defmodule ElixirSyncthingBot.Notifiers.FoldersStateTest do
               %{id: "123", name: "server"} => %{
                 %{id: "second_folder_id", name: "second_folder_name"} => %{
                   current: 0,
-                  total: 2048
+                  total: 2048,
+                  start: 0
                 }
               },
               %{id: "456", name: "server2"} => %{
-                %{id: "first_folder_id", name: "first_folder_name"} => %{current: 0, total: 2048}
+                %{id: "first_folder_id", name: "first_folder_name"} => %{
+                  current: 0,
+                  total: 2048,
+                  start: 0
+                }
               }
             }} == FoldersState.add_event(device1_info, event("first_folder_id", "idle", 2048))
 
@@ -112,18 +130,27 @@ defmodule ElixirSyncthingBot.Notifiers.FoldersStateTest do
               %{id: "123", name: "server"} => %{
                 %{id: "second_folder_id", name: "second_folder_name"} => %{
                   current: 1024,
-                  total: 2048
+                  total: 2048,
+                  start: 0
                 }
               },
               %{id: "456", name: "server2"} => %{
-                %{id: "first_folder_id", name: "first_folder_name"} => %{current: 0, total: 2048}
+                %{id: "first_folder_id", name: "first_folder_name"} => %{
+                  current: 0,
+                  total: 2048,
+                  start: 0
+                }
               }
             }} == FoldersState.add_event(device1_info, event("second_folder_id", "syncing", 1024))
 
     assert {true,
             %{
               %{id: "456", name: "server2"} => %{
-                %{id: "first_folder_id", name: "first_folder_name"} => %{current: 0, total: 2048}
+                %{id: "first_folder_id", name: "first_folder_name"} => %{
+                  current: 0,
+                  total: 2048,
+                  start: 0
+                }
               }
             }} == FoldersState.add_event(device1_info, event("second_folder_id", "idle", 2048))
 
