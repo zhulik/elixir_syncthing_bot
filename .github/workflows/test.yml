@@ -25,4 +25,4 @@ jobs:
       - run: make docker
       - run: |
           docker login docker.pkg.github.com -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} && \
-	        docker push docker.pkg.github.com/zhulik/elixir_syncthing_bot/elixir_syncthing_bot:latest
+          docker push docker.pkg.github.com/zhulik/elixir_syncthing_bot/elixir_syncthing_bot:latest
