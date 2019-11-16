@@ -29,6 +29,3 @@ release: deps
 docker:
 	docker build -t docker.pkg.github.com/zhulik/elixir_syncthing_bot/elixir_syncthing_bot:latest .
 
-push: docker
-	docker login docker.pkg.github.com -u zhulik -p $GITHUB_TOKEN
-	docker push docker.pkg.github.com/zhulik/elixir_syncthing_bot/elixir_syncthing_bot:latest
