@@ -2,7 +2,7 @@ defmodule ElixirSyncthingBot do
   use Application
 
   alias ElixirSyncthingBot.Notifiers.FoldersState
-  alias ElixirSyncthingBot.Notifiers.Notifier
+  alias ElixirSyncthingBot.Notifiers.NotifierDispatcher
 
   alias ElixirSyncthingBot.ServersSupervisor
 
@@ -14,7 +14,7 @@ defmodule ElixirSyncthingBot do
       {Registry, [keys: :unique, name: Registry.ElixirSyncthingBot]},
       ServersSupervisor,
       FoldersState,
-      Notifier.notifier(notifier, notifier_options)
+      NotifierDispatcher.notifier(notifier, notifier_options)
     ]
 
     opts = [strategy: :one_for_one, name: ElixirSyncthingBot.Supervisor]

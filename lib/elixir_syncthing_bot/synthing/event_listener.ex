@@ -1,7 +1,7 @@
 defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
   use GenServer
 
-  alias ElixirSyncthingBot.Notifiers.Notifier
+  alias ElixirSyncthingBot.Notifiers.NotifierDispatcher
   alias ElixirSyncthingBot.Syncthing.Api
   alias ElixirSyncthingBot.Syncthing.Api.ConfigListener
 
@@ -61,7 +61,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
 
     events
     |> Enum.map(fn event -> [config: config, event: event] end)
-    |> Notifier.process!()
+    |> NotifierDispatcher.process!()
 
     %{state | since: Enum.at(events, -1).id}
   end
