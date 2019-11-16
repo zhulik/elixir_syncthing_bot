@@ -22,8 +22,9 @@ jobs:
           restore-keys: ${{ runner.os }}-mix-build-
       - run: mix deps.get
       - run: make check
+      - run: echo "${{github.ref}}"
       - name: Deploy
-        if: ${{ github.ref }} == 'master'
+        if: github.ref == 'master'
         run: |
           make docker
           docker login docker.pkg.github.com -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} && \
