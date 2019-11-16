@@ -28,4 +28,3 @@ release: deps
 
 docker:
 	docker build -t docker.pkg.github.com/zhulik/elixir_syncthing_bot/elixir_syncthing_bot:latest .
-
