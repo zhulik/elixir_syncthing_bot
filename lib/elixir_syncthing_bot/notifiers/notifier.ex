@@ -23,12 +23,13 @@ defmodule ElixirSyncthingBot.Notifiers.Notifier do
 
       def handle_cast({:process, events}, state) do
         log("Received #{Enum.count(events)}")
-        process_events(events, state)
+        state = process_events(events, state)
         {:noreply, state}
       end
 
       defp process_events(events, state) do
-        Enum.map(events, fn event -> process_event(event, state) end)
+        events
+        |> Enum.reduce(state, fn event, s -> process_event(event, s) end)
       end
 
       defp view_path(name) do
