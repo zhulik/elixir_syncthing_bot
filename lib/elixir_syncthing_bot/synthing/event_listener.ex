@@ -44,23 +44,26 @@ defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
   @impl true
   def handle_info(:run, state) do
     log("Requesting events...")
-    pid = self()
 
-    Task.start(fn ->
-      result = Api.events(state.client, state.since)
-      send(pid, {:update, result})
+    Task.async(fn ->
+      {:updated, Api.events(state.client, state.since)}
     end)
 
     {:noreply, state}
   end
 
   @impl true
-  def handle_info({:update, result}, state) do
+  def handle_info({_task, {:updated, result}}, state) do
     state =
       result
       |> process_events(state)
 
     send(self(), :run)
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_info({:DOWN, _, _, _, _}, state) do
     {:noreply, state}
   end
 
