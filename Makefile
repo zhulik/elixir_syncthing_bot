@@ -10,7 +10,7 @@ format:
 	mix format
 
 dialyzer:
-	# mix dialyzer --format dialyxir --quiet
+	mix dialyzer --format dialyxir --quiet
 
 lint: format dialyzer
 	mix credo --strict

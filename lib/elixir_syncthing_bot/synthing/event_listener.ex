@@ -21,8 +21,6 @@ defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
 
   @impl true
   def init(host: host, token: token) do
-    send(self(), :run)
-
     client = Api.client(host: host, token: token)
 
     state = %{
@@ -39,6 +37,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
   @impl true
   def handle_continue(:recover_state, state) do
     {:ok, events} = Api.events(state.client)
+    send(self(), :run)
     {:noreply, %{state | since: Enum.at(events, -1).id}}
   end
 

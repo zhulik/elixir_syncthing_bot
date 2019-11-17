@@ -9,6 +9,7 @@ defmodule ElixirSyncthingBot.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       aliases: aliases()
+      # dialyzer: [flags: ["-Wunmatched_returns", :error_handling, :race_conditions, :underspecs]]
     ]
   end
 

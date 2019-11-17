@@ -27,6 +27,7 @@ defmodule ElixirSyncthingBot.Notifiers.Telegram do
   def process_event(_event, _state) do
   end
 
+  @dialyzer {:nowarn_function, {:notify_login_attempt, 3}}
   def notify_login_attempt(config, %{data: %{success: true, username: username}}, state) do
     {:ok, _} =
       ExGram.send_message(
