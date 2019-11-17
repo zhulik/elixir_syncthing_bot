@@ -2,7 +2,7 @@ defmodule ElixirSyncthingBot.Notifiers.Progress do
   @full "█"
   @empty "░"
 
-  @spec render(integer, integer, integer) :: String.t()
+  @spec render(integer, integer, non_neg_integer()) :: String.t()
   def render(current, total, length) do
     percent = progress(current, total)
 
@@ -20,7 +20,7 @@ defmodule ElixirSyncthingBot.Notifiers.Progress do
     100 * current / total
   end
 
-  @spec render_percent(integer, integer) :: String.t()
+  @spec render_percent(integer, non_neg_integer) :: String.t()
   defp render_percent(percent, length) do
     full_count =
       (percent / 100 * 20)
