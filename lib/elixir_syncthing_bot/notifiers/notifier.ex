@@ -21,11 +21,6 @@ defmodule ElixirSyncthingBot.Notifiers.Notifier do
         )
       end
 
-      def init(options) do
-        log("Starting with options #{inspect(options)}..")
-        {:ok, %{options: options}}
-      end
-
       def handle_cast({:process, events}, state) do
         log("Received #{Enum.count(events)}")
         process_events(events, state)

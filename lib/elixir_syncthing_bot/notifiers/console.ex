@@ -5,6 +5,12 @@ defmodule ElixirSyncthingBot.Notifiers.Console do
   alias ElixirSyncthingBot.Syncthing.Api.Config
 
   @impl true
+  def init(options) do
+    log("Starting with options #{inspect(options)}..")
+    {:ok, %{}}
+  end
+
+  @impl true
   def process_event([config: config, event: %{type: "LoginAttempt"} = event], _state) do
     log("LoginAttempt! username: #{event.data.username} success: #{event.data.success}")
     notify_login_attempt(config, event)
