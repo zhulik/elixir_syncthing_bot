@@ -29,7 +29,9 @@ defmodule ElixirSyncthingBot.Notifiers.Notifier do
 
       defp process_events(events, state) do
         events
-        |> Enum.reduce(state, fn event, s -> process_event(event, s) end)
+        |> Enum.reduce(state, fn event, s ->
+          process_event(event, s)
+        end)
       end
 
       defp view_path(name) do

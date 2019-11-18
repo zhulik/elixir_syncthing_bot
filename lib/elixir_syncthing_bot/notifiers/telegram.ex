@@ -38,7 +38,8 @@ defmodule ElixirSyncthingBot.Notifiers.Telegram do
   end
 
   @impl true
-  def process_event(_event, _state) do
+  def process_event(_event, state) do
+    state
   end
 
   @dialyzer {:nowarn_function, {:notify_login_attempt, 3}}
@@ -50,15 +51,16 @@ defmodule ElixirSyncthingBot.Notifiers.Telegram do
     send_message("Unsuccessful login attempt at #{Config.my_name(config)} as #{username}!", state)
   end
 
-  defp notify_folders_state(folders_state, state) when folders_state == %{} do
-    IO.puts("Syncrhonization finished!")
-    state
+  defp notify_folders_state(folders_state, %{last_state_message_id: message_id} = state)
+       when folders_state == %{} do
+    update_message(message_id, "Syncrhonization finished!", state)
+    %{state | last_state_message_id: nil, last_state_message_text: nil}
   end
 
   defp notify_folders_state(folders_state, %{last_state_message_id: nil} = state) do
     text = render("folder_summary_notication", state: folders_state)
 
-    %{message: %{result: %{message_id: message_id}}} = send_message(text, state)
+    %{message_id: message_id} = send_message(text, state)
     %{state | last_state_message_id: message_id, last_state_message_text: text}
   end
 
@@ -71,9 +73,10 @@ defmodule ElixirSyncthingBot.Notifiers.Telegram do
 
     if text != last_state_message_text do
       update_message(message_id, text, state)
+      %{state | last_state_message_text: text}
+    else
+      state
     end
-
-    state
   end
 
   @dialyzer {:nowarn_function, {:send_message, 2}}
@@ -93,9 +96,9 @@ defmodule ElixirSyncthingBot.Notifiers.Telegram do
   defp update_message(message_id, text, state) do
     {:ok, message} =
       ExGram.edit_message_text(
+        text,
         chat_id: state.user_id,
         message_id: message_id,
-        text: text,
         token: state.token,
         parse_mode: :markdown
       )
