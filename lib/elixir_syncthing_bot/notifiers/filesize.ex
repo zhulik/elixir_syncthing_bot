@@ -1,5 +1,5 @@
 defmodule ElixirSyncthingBot.Notifiers.Filesize do
-  @units {"B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB"}
+  @units {"B", "KB", "MB", "GB", "TB", "PB", "EB"}
 
   def humanize(0) do
     "0.00 B"
