@@ -14,6 +14,10 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConfigListener do
     end
   end
 
+  def get(host) do
+    GenServer.call(name(host), :get)
+  end
+
   def start_link(server) do
     GenServer.start_link(__MODULE__, server, name: name(server[:host]))
   end
@@ -41,10 +45,6 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConfigListener do
     [ok: config, ok: status] = request_config!(state.client)
 
     {:noreply, %{state | config: config, status: status}}
-  end
-
-  def get(host) do
-    GenServer.call(name(host), :get)
   end
 
   @impl true

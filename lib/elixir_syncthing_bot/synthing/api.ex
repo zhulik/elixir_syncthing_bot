@@ -50,4 +50,15 @@ defmodule ElixirSyncthingBot.Syncthing.Api do
         {:error, data}
     end
   end
+
+  @spec connections(Tesla.Client.t()) :: {:ok, term} | {:error, atom}
+  def connections(client) do
+    case Tesla.get(client, "/rest/system/connections") do
+      {:ok, %{status: 200, body: connections}} ->
+        {:ok, connections}
+
+      {:error, data} ->
+        {:error, data}
+    end
+  end
 end
