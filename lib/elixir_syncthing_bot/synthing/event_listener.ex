@@ -4,6 +4,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
   alias ElixirSyncthingBot.Notifiers.NotifierDispatcher
   alias ElixirSyncthingBot.Syncthing.Api
   alias ElixirSyncthingBot.Syncthing.Api.ConfigListener
+  alias ElixirSyncthingBot.Syncthing.Api.ConnectionsListener
 
   defmacrop log(msg) do
     quote do
@@ -71,9 +72,10 @@ defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
     log("Got #{Enum.count(events)} events")
 
     config = ConfigListener.get(state.host)
+    rates = ConnectionsListener.rates(state.host)
 
     events
-    |> Enum.map(fn event -> [config: config, event: event] end)
+    |> Enum.map(fn event -> [config: config, event: event, rates: rates] end)
     |> NotifierDispatcher.process!()
 
     %{state | since: Enum.at(events, -1).id}

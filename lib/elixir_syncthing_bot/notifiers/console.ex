@@ -11,19 +11,25 @@ defmodule ElixirSyncthingBot.Notifiers.Console do
   end
 
   @impl true
-  def process_event([config: config, event: %{type: "LoginAttempt"} = event], state) do
+  def process_event(
+        [config: config, event: %{type: "LoginAttempt"} = event, rates: _rates],
+        state
+      ) do
     log("LoginAttempt! username: #{event.data.username} success: #{event.data.success}")
     notify_login_attempt(config, event)
     state
   end
 
   @impl true
-  def process_event([config: config, event: %{type: "FolderSummary"} = event], state) do
+  def process_event(
+        [config: config, event: %{type: "FolderSummary"} = event, rates: rates],
+        state
+      ) do
     log("FolderSummary!")
 
     case FoldersState.add_event(config, event) do
       {true, folders_state} ->
-        notify_folders_state(folders_state)
+        notify_folders_state(folders_state, rates)
         state
 
       _ ->
@@ -44,11 +50,11 @@ defmodule ElixirSyncthingBot.Notifiers.Console do
     IO.puts("Unsuccessful login attempt at #{Config.my_name(config)} as #{username}!")
   end
 
-  defp notify_folders_state(state) when state == %{} do
+  defp notify_folders_state(state, _rates) when state == %{} do
     IO.puts("Syncrhonization finished!")
   end
 
-  defp notify_folders_state(state) do
-    IO.puts(render("folder_summary_notication", state: state))
+  defp notify_folders_state(state, rates) do
+    IO.puts(render("folder_summary_notication", state: state, rates: rates))
   end
 end

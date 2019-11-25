@@ -2,6 +2,7 @@ defmodule ElixirSyncthingBot.ServersSupervisor do
   use DynamicSupervisor
 
   alias ElixirSyncthingBot.Syncthing.Api.ConfigListener
+  alias ElixirSyncthingBot.Syncthing.Api.ConnectionsListener
   alias ElixirSyncthingBot.Syncthing.Api.EventListener
 
   def start_link(init_arg) do
@@ -18,6 +19,9 @@ defmodule ElixirSyncthingBot.ServersSupervisor do
     DynamicSupervisor.start_child(__MODULE__, spec)
 
     spec = {ConfigListener, args}
+    DynamicSupervisor.start_child(__MODULE__, spec)
+
+    spec = {ConnectionsListener, args}
     DynamicSupervisor.start_child(__MODULE__, spec)
   end
 end
