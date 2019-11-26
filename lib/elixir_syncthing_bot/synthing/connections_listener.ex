@@ -41,6 +41,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConnectionsListener do
   end
 
   @impl true
+  @dialyzer {:nowarn_function, {:handle_continue, 2}}
   def handle_continue(:recover_state, state) do
     connections = %Connections{
       total: request_connections!(state.client),
@@ -52,6 +53,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConnectionsListener do
   end
 
   @impl true
+  @dialyzer {:nowarn_function, {:handle_info, 2}}
   def handle_info(:update, state) do
     log("Updating config...")
 
