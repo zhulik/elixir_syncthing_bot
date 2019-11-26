@@ -53,7 +53,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConnectionsListener do
 
   @impl true
   def handle_info(:update, state) do
-    log("Updating connections...")
+    log("Updating config...")
 
     connections = %Connections{
       total: request_connections!(state.client),
