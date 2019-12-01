@@ -32,6 +32,8 @@ defmodule ElixirSyncthingBot do
     end)
     |> Enum.each(&ServersSupervisor.add_server/1)
 
+    {:ok, _} = Logger.add_backend(Sentry.LoggerBackend)
+
     res
   end
 end

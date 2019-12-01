@@ -2,15 +2,14 @@ FROM elixir:1.9.4-alpine AS builder
 ENV APPDIR /app
 RUN mkdir $APPDIR
 WORKDIR $APPDIR
+RUN apk add --no-cache make
 ADD mix.exs mix.lock Makefile $APPDIR/
-RUN apk add --no-cache make && \
-    mix local.hex --force && \
-    make deps
 COPY . $APPDIR
 RUN make release
 
 FROM alpine:latest
 ENV APPDIR /app
+ENV REPLACE_OS_VARS true
 RUN mkdir $APPDIR
 WORKDIR $APPDIR
 RUN apk add --no-cache bash

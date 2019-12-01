@@ -4,6 +4,7 @@ elixir_syncthing_bot: format deps
 	mix compile
 
 deps:
+	mix local.hex --force
 	mix deps.get
 
 format:
@@ -24,6 +25,7 @@ run: elixir_syncthing_bot
 	mix run --no-halt
 
 release: deps
+	mix local.rebar --force
 	MIX_ENV=prod mix distillery.release
 
 docker:
