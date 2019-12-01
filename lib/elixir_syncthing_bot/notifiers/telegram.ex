@@ -57,17 +57,17 @@ defmodule ElixirSyncthingBot.Notifiers.Telegram do
     send_message("Unsuccessful login attempt at #{Config.my_name(config)} as #{username}!", state)
   end
 
-  defp notify_folders_state(folders_state, %{last_state_message_id: message_id} = state, _rates)
-       when folders_state == %{} do
-    update_message(message_id, "Syncrhonization finished!", state)
-    %{state | last_state_message_id: nil, last_state_message_text: nil}
-  end
-
   defp notify_folders_state(folders_state, %{last_state_message_id: nil} = state, rates) do
     text = render("folder_summary_notication", state: folders_state, rates: rates)
 
     %{message_id: message_id} = send_message(text, state)
     %{state | last_state_message_id: message_id, last_state_message_text: text}
+  end
+
+  defp notify_folders_state(folders_state, %{last_state_message_id: message_id} = state, _rates)
+       when folders_state == %{} do
+    update_message(message_id, "Syncrhonization finished!", state)
+    %{state | last_state_message_id: nil, last_state_message_text: nil}
   end
 
   defp notify_folders_state(
