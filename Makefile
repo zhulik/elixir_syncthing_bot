@@ -10,10 +10,7 @@ deps:
 format:
 	mix format
 
-dialyzer:
-	mix dialyzer --format dialyxir --quiet
-
-lint: format dialyzer
+lint: format
 	mix credo --strict
 
 test: format

@@ -1,4 +1,5 @@
 defmodule ElixirSyncthingBot.Syncthing.Api do
+  defstruct [:client, :host]
   use Tesla
 
   @middleware [
@@ -7,7 +8,6 @@ defmodule ElixirSyncthingBot.Syncthing.Api do
     {Tesla.Middleware.Timeout, timeout: 30_000}
   ]
 
-  @spec client(host: String.t(), token: String.t()) :: Tesla.Client.t()
   def client(host: host, token: token) do
     middleware =
       [
@@ -15,12 +15,11 @@ defmodule ElixirSyncthingBot.Syncthing.Api do
         {Tesla.Middleware.Headers, [{"X-API-Key", token}]}
       ] ++ @middleware
 
-    Tesla.client(middleware)
+    %__MODULE__{client: Tesla.client(middleware), host: host}
   end
 
-  @spec events(Tesla.Client.t(), integer | nil, integer | nil) :: {:ok, [term]} | {:error, atom}
-  def events(client, since \\ nil, limit \\ nil) do
-    case Tesla.get(client, "/rest/events", query: [since: since, limit: limit]) do
+  def events(api, since \\ nil, limit \\ nil) do
+    case Tesla.get(api.client, "/rest/events", query: [since: since, limit: limit]) do
       {:ok, %{status: 200, body: events}} ->
         {:ok, events}
 
@@ -29,9 +28,8 @@ defmodule ElixirSyncthingBot.Syncthing.Api do
     end
   end
 
-  @spec status(Tesla.Client.t()) :: {:ok, term} | {:error, atom}
-  def status(client) do
-    case Tesla.get(client, "/rest/system/status") do
+  def status(api) do
+    case Tesla.get(api.client, "/rest/system/status") do
       {:ok, %{status: 200, body: config}} ->
         {:ok, config}
 
@@ -40,9 +38,8 @@ defmodule ElixirSyncthingBot.Syncthing.Api do
     end
   end
 
-  @spec config(Tesla.Client.t()) :: {:ok, term} | {:error, atom}
-  def config(client) do
-    case Tesla.get(client, "/rest/system/config") do
+  def config(api) do
+    case Tesla.get(api.client, "/rest/system/config") do
       {:ok, %{status: 200, body: status}} ->
         {:ok, status}
 
@@ -51,9 +48,8 @@ defmodule ElixirSyncthingBot.Syncthing.Api do
     end
   end
 
-  @spec connections(Tesla.Client.t()) :: {:ok, term} | {:error, atom}
-  def connections(client) do
-    case Tesla.get(client, "/rest/system/connections") do
+  def connections(api) do
+    case Tesla.get(api.client, "/rest/system/connections") do
       {:ok, %{status: 200, body: connections}} ->
         {:ok, connections}
 

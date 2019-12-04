@@ -48,7 +48,6 @@ defmodule ElixirSyncthingBot.Notifiers.Telegram do
     state
   end
 
-  @dialyzer {:nowarn_function, {:notify_login_attempt, 3}}
   def notify_login_attempt(config, %{data: %{success: true, username: username}}, state) do
     send_message("Successful login attempt at #{Config.my_name(config)} as #{username}!", state)
   end
@@ -86,7 +85,6 @@ defmodule ElixirSyncthingBot.Notifiers.Telegram do
     end
   end
 
-  @dialyzer {:nowarn_function, {:send_message, 2}}
   defp send_message(text, state) do
     {:ok, message} =
       ExGram.send_message(
@@ -99,7 +97,6 @@ defmodule ElixirSyncthingBot.Notifiers.Telegram do
     message
   end
 
-  @dialyzer {:nowarn_function, {:update_message, 3}}
   defp update_message(message_id, text, state) do
     {:ok, message} =
       ExGram.edit_message_text(

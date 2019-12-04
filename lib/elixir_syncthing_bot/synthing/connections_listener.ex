@@ -10,7 +10,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConnectionsListener do
     quote do
       require Logger
 
-      Logger.info(unquote(msg) <> " #{__MODULE__} #{var!(state).host}")
+      Logger.info(unquote(msg) <> " #{__MODULE__} #{var!(state).api.host}")
     end
   end
 
@@ -24,11 +24,10 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConnectionsListener do
 
   @impl true
   def init(host: host, token: token) do
-    client = Api.client(host: host, token: token)
+    api = Api.client(host: host, token: token)
 
     state = %{
-      host: host,
-      client: client,
+      api: api,
       connections: nil,
       rates: nil
     }
@@ -41,10 +40,9 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConnectionsListener do
   end
 
   @impl true
-  @dialyzer {:nowarn_function, {:handle_continue, 2}}
   def handle_continue(:recover_state, state) do
     connections = %Connections{
-      total: request_connections!(state.client),
+      total: request_connections!(state.api),
       timestamp: timestamp()
     }
 
@@ -53,12 +51,11 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConnectionsListener do
   end
 
   @impl true
-  @dialyzer {:nowarn_function, {:handle_info, 2}}
   def handle_info(:update, state) do
     log("Updating config...")
 
     connections = %Connections{
-      total: request_connections!(state.client),
+      total: request_connections!(state.api),
       timestamp: timestamp()
     }
 
@@ -81,8 +78,8 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConnectionsListener do
     {:via, Registry, {Registry.ElixirSyncthingBot, "#{host}.connections"}}
   end
 
-  defp request_connections!(client) do
-    {:ok, connections} = Api.connections(client)
+  defp request_connections!(api) do
+    {:ok, connections} = Api.connections(api)
     connections.total
   end
 

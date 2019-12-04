@@ -9,7 +9,6 @@ defmodule ElixirSyncthingBot.Notifiers.Filesize do
     "0.00 B"
   end
 
-  @spec humanize(integer) :: String.t()
   def humanize(size) do
     exp = (:math.log(size) / :math.log(1024)) |> trunc
 

@@ -10,7 +10,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConfigListener do
     quote do
       require Logger
 
-      Logger.info(unquote(msg) <> " #{__MODULE__} #{var!(state).host}")
+      Logger.info(unquote(msg) <> " #{__MODULE__} #{var!(state).api.host}")
     end
   end
 
@@ -24,11 +24,10 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConfigListener do
 
   @impl true
   def init(host: host, token: token) do
-    client = Api.client(host: host, token: token)
+    api = Api.client(host: host, token: token)
 
     state = %{
-      host: host,
-      client: client,
+      api: api,
       config: nil,
       status: nil
     }
@@ -42,7 +41,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConfigListener do
 
   @impl true
   def handle_continue(:recover_state, state) do
-    [ok: config, ok: status] = request_config!(state.client)
+    [ok: config, ok: status] = request_config!(state.api)
 
     {:noreply, %{state | config: config, status: status}}
   end
@@ -55,36 +54,36 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConfigListener do
   @impl true
   def handle_info(:update, state) do
     log("Updating config...")
-    config = config(state.client, state.config, state.status)
+    config = config(state.api, state.config, state.status)
     Process.send_after(self(), :update, @delay)
 
     {:noreply, Map.merge(state, config)}
   end
 
-  defp config(client, current_config, current_status) do
-    case request_config(client, current_config, current_status) do
+  defp config(api, current_config, current_status) do
+    case request_config(api, current_config, current_status) do
       [ok: config, ok: status] -> %{config: config, status: status}
       _ -> %Config{config: current_config, status: current_status}
     end
   end
 
-  defp request_config(client, current_config, current_status) do
+  defp request_config(api, current_config, current_status) do
     [
-      fn -> config(client, current_config) end,
-      fn -> status(client, current_status) end
+      fn -> config(api, current_config) end,
+      fn -> status(api, current_status) end
     ]
     |> Task.async_stream(fn f -> f.() end, on_timeout: :kill_task)
     |> Enum.to_list()
   end
 
-  defp request_config!(client) do
+  defp request_config!(api) do
     [
       fn ->
-        {:ok, config} = Api.config(client)
+        {:ok, config} = Api.config(api)
         config
       end,
       fn ->
-        {:ok, status} = Api.status(client)
+        {:ok, status} = Api.status(api)
         status
       end
     ]
@@ -92,8 +91,8 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConfigListener do
     |> Enum.to_list()
   end
 
-  defp config(client, current_config) do
-    case Api.config(client) do
+  defp config(api, current_config) do
+    case Api.config(api) do
       {:ok, config} ->
         config
 
@@ -102,8 +101,8 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConfigListener do
     end
   end
 
-  defp status(client, current_status) do
-    case Api.status(client) do
+  defp status(api, current_status) do
+    case Api.status(api) do
       {:ok, status} ->
         status
 

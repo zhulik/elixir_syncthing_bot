@@ -10,7 +10,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
     quote do
       require Logger
 
-      Logger.info(unquote(msg) <> " #{__MODULE__} #{var!(state).host}")
+      Logger.info(unquote(msg) <> " #{__MODULE__} #{var!(state).api.host}")
     end
   end
 
@@ -22,11 +22,11 @@ defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
 
   @impl true
   def init(host: host, token: token) do
-    client = Api.client(host: host, token: token)
+    api = Api.client(host: host, token: token)
 
     state = %{
       host: host,
-      client: client,
+      api: api,
       since: nil
     }
 
@@ -37,7 +37,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
 
   @impl true
   def handle_continue(:recover_state, state) do
-    {:ok, events} = Api.events(state.client)
+    {:ok, events} = Api.events(state.api)
     send(self(), :run)
     {:noreply, %{state | since: Enum.at(events, -1).id}}
   end
@@ -47,7 +47,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
     log("Requesting events...")
 
     Task.async(fn ->
-      {:updated, Api.events(state.client, state.since)}
+      {:updated, Api.events(state.api, state.since)}
     end)
 
     {:noreply, state}
@@ -71,8 +71,8 @@ defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
   defp process_events({:ok, events}, state) do
     log("Got #{Enum.count(events)} events")
 
-    config = ConfigListener.get(state.host)
-    rates = ConnectionsListener.rates(state.host)
+    config = ConfigListener.get(state.api.host)
+    rates = ConnectionsListener.rates(state.api.host)
 
     events
     |> Enum.map(fn event -> [config: config, event: event, rates: rates] end)
