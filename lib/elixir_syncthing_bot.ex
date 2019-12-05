@@ -1,6 +1,8 @@
 defmodule ElixirSyncthingBot do
   use Application
 
+  alias ElixirSyncthingBot.Syncthing.Api
+
   alias ElixirSyncthingBot.Notifiers.FoldersState
   alias ElixirSyncthingBot.Notifiers.NotifierDispatcher
 
@@ -28,10 +30,10 @@ defmodule ElixirSyncthingBot do
     |> Enum.filter(fn server -> server != "" end)
     |> Enum.map(&URI.parse/1)
     |> Enum.map(fn uri ->
-      [
+      Api.client(
         host: "#{uri.scheme}://#{uri.host}:#{uri.port}#{uri.path}",
         token: uri.userinfo
-      ]
+      )
     end)
     |> Enum.each(&ServersSupervisor.add_server/1)
 

@@ -18,14 +18,12 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConfigListener do
     GenServer.call(name(host), :get)
   end
 
-  def start_link(server) do
-    GenServer.start_link(__MODULE__, server, name: name(server[:host]))
+  def start_link(api) do
+    GenServer.start_link(__MODULE__, api, name: name(api.host))
   end
 
   @impl true
-  def init(host: host, token: token) do
-    api = Api.client(host: host, token: token)
-
+  def init(api) do
     state = %{
       api: api,
       config: nil,
