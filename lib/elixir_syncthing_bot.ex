@@ -28,7 +28,10 @@ defmodule ElixirSyncthingBot do
     |> Enum.filter(fn server -> server != "" end)
     |> Enum.map(&URI.parse/1)
     |> Enum.map(fn uri ->
-      [host: "#{uri.scheme}://#{uri.host}:#{uri.port}/#{uri.query}", token: uri.userinfo]
+      [
+        host: "#{uri.scheme}://#{uri.host}:#{uri.port}#{uri.path}",
+        token: uri.userinfo
+      ]
     end)
     |> Enum.each(&ServersSupervisor.add_server/1)
 
