@@ -4,8 +4,6 @@ defmodule ElixirSyncthingBot.Notifiers.FoldersState do
   alias ElixirSyncthingBot.Syncthing.Api.Config
 
   def start_link(_) do
-    Registry.start_link(keys: :unique, name: Registry.ElixirSyncthingBot)
-
     GenServer.start_link(__MODULE__, %{},
       name: {:via, Registry, {Registry.ElixirSyncthingBot, :folders_state}}
     )
