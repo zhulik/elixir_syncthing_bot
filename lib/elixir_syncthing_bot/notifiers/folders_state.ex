@@ -1,28 +1,20 @@
 defmodule ElixirSyncthingBot.Notifiers.FoldersState do
-  use GenServer
+  use ExActor.GenServer, export: __MODULE__
 
   alias ElixirSyncthingBot.Syncthing.Api.Config
 
-  def start_link(_) do
-    GenServer.start_link(__MODULE__, %{},
-      name: {:via, Registry, {Registry.ElixirSyncthingBot, :folders_state}}
-    )
-  end
-
-  @impl true
-  def init(state) do
-    {:ok, state}
+  defstart start_link(_) do
+    initial_state(%{})
   end
 
   def add_event(config, event) do
     GenServer.call(
-      {:via, Registry, {Registry.ElixirSyncthingBot, :folders_state}},
+      __MODULE__,
       {:add_event, config, event}
     )
   end
 
-  @impl true
-  def handle_call({:add_event, config, event}, _from, state) do
+  defcall add_event(config, event), state: state do
     device_key = %{id: Config.my_id(config), name: Config.my_name(config)}
     folder_key = %{id: event.data.folder, name: Config.folder_name(config, event.data.folder)}
 
@@ -32,7 +24,7 @@ defmodule ElixirSyncthingBot.Notifiers.FoldersState do
       |> apply_event(device_key, folder_key, event)
       |> cleanup_state
 
-    {:reply, {state != new_state, new_state}, new_state}
+    set_and_reply(new_state, {state != new_state, new_state})
   end
 
   defp apply_event(state, device_key, folder_key, %{data: %{summary: %{state: "idle"}}}) do

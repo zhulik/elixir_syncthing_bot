@@ -29,7 +29,8 @@ defmodule ElixirSyncthingBot.MixProject do
       {:jason, "~> 1.1.2"},
       {:credo, "~> 1.1.5", only: [:dev, :test], runtime: false},
       {:distillery, "~> 2.1", runtime: false},
-      {:sentry, "~> 7.0"}
+      {:sentry, "~> 7.0"},
+      {:exactor, "~> 2.2.4", warn_missing: false}
     ]
   end
 
