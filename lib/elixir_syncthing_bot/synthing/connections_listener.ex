@@ -5,6 +5,8 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConnectionsListener do
   alias ElixirSyncthingBot.Syncthing.Api.Connections
 
   @delay 3_000
+  @default_total %{inBytesTotal: 0, outBytesTotal: 0}
+  @default_rates %{in_rate: 0, out_rate: 0}
 
   defmacrop log(msg) do
     quote do
@@ -26,34 +28,35 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConnectionsListener do
   def init(api) do
     state = %{
       api: api,
-      connections: nil,
-      rates: nil
+      connections: %Connections{
+        total: @default_total,
+        timestamp: timestamp()
+      },
+      rates: @default_rates
     }
 
     log("Starting...")
 
     Process.send_after(self(), :update, @delay)
 
-    {:ok, state, {:continue, :recover_state}}
-  end
-
-  @impl true
-  def handle_continue(:recover_state, state) do
-    connections = %Connections{
-      total: request_connections!(state.api),
-      timestamp: timestamp()
-    }
-
-    {:noreply,
-     %{state | connections: connections, rates: Connections.rates(connections, connections)}}
+    {:ok, state}
   end
 
   @impl true
   def handle_info(:update, state) do
     log("Updating config...")
 
+    Task.async(fn ->
+      {:updated, request_connections(state.api)}
+    end)
+
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_info({_task, {:updated, total}}, state) do
     connections = %Connections{
-      total: request_connections!(state.api),
+      total: total,
       timestamp: timestamp()
     }
 
@@ -68,6 +71,11 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConnectionsListener do
   end
 
   @impl true
+  def handle_info({:DOWN, _, _, _, _}, state) do
+    {:noreply, state}
+  end
+
+  @impl true
   def handle_call(:rates, _from, state) do
     {:reply, state.rates, state}
   end
@@ -76,9 +84,12 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConnectionsListener do
     {:via, Registry, {Registry.ElixirSyncthingBot, "#{host}.connections"}}
   end
 
-  defp request_connections!(api) do
-    {:ok, connections} = Api.connections(api)
-    connections.total
+  defp request_connections(api) do
+    case Api.connections(api) do
+      {:ok, connections} -> connections.total
+      {:error, :timeout} -> @default_total
+      {:error, :econnrefused} -> @default_total
+    end
   end
 
   defp timestamp do

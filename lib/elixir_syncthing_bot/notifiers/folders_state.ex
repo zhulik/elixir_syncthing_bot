@@ -7,13 +7,6 @@ defmodule ElixirSyncthingBot.Notifiers.FoldersState do
     initial_state(%{})
   end
 
-  def add_event(config, event) do
-    GenServer.call(
-      __MODULE__,
-      {:add_event, config, event}
-    )
-  end
-
   defcall add_event(config, event), state: state do
     device_key = %{id: Config.my_id(config), name: Config.my_name(config)}
     folder_key = %{id: event.data.folder, name: Config.folder_name(config, event.data.folder)}
