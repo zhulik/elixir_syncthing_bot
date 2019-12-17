@@ -87,8 +87,7 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConnectionsListener do
   defp request_connections(api) do
     case Api.connections(api) do
       {:ok, connections} -> connections.total
-      {:error, :timeout} -> @default_total
-      {:error, :econnrefused} -> @default_total
+      {:error, _} -> @default_total
     end
   end
 

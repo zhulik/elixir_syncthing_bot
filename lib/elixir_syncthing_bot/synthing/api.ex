@@ -23,6 +23,9 @@ defmodule ElixirSyncthingBot.Syncthing.Api do
       {:ok, %{status: 200, body: events}} ->
         {:ok, events}
 
+      {:ok, data} ->
+        {:error, data}
+
       {:error, error} ->
         {:error, error}
     end
@@ -32,6 +35,9 @@ defmodule ElixirSyncthingBot.Syncthing.Api do
     case Tesla.get(api.client, "/rest/system/status") do
       {:ok, %{status: 200, body: config}} ->
         {:ok, config}
+
+      {:ok, data} ->
+        {:error, data}
 
       {:error, data} ->
         {:error, data}
@@ -43,6 +49,9 @@ defmodule ElixirSyncthingBot.Syncthing.Api do
       {:ok, %{status: 200, body: status}} ->
         {:ok, status}
 
+      {:ok, data} ->
+        {:error, data}
+
       {:error, data} ->
         {:error, data}
     end
@@ -52,6 +61,9 @@ defmodule ElixirSyncthingBot.Syncthing.Api do
     case Tesla.get(api.client, "/rest/system/connections") do
       {:ok, %{status: 200, body: connections}} ->
         {:ok, connections}
+
+      {:ok, data} ->
+        {:error, data}
 
       {:error, data} ->
         {:error, data}

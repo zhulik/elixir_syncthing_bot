@@ -34,9 +34,15 @@ defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
 
   @impl true
   def handle_continue(:recover_state, state) do
-    {:ok, events} = Api.events(state.api)
-    send(self(), :run)
-    {:noreply, %{state | since: Enum.at(events, -1).id}}
+    case Api.events(state.api) do
+      {:ok, events} ->
+        send(self(), :run)
+        {:noreply, %{state | since: Enum.at(events, -1).id}}
+
+      {:error, _} ->
+        send(self(), :run)
+        {:noreply, state}
+    end
   end
 
   @impl true
@@ -78,12 +84,8 @@ defmodule ElixirSyncthingBot.Syncthing.Api.EventListener do
     %{state | since: Enum.at(events, -1).id}
   end
 
-  defp process_events({:error, :econnrefused}, state) do
-    Process.sleep(10_000)
-    state
-  end
-
   defp process_events({:error, _}, state) do
+    Process.sleep(10_000)
     state
   end
 end

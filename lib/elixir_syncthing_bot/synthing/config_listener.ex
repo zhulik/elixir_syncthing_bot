@@ -77,12 +77,16 @@ defmodule ElixirSyncthingBot.Syncthing.Api.ConfigListener do
   defp request_config!(api) do
     [
       fn ->
-        {:ok, config} = Api.config(api)
-        config
+        case Api.config(api) do
+          {:ok, config} -> config
+          {:error, _} -> nil
+        end
       end,
       fn ->
-        {:ok, status} = Api.status(api)
-        status
+        case Api.status(api) do
+          {:ok, status} -> status
+          {:error, _} -> nil
+        end
       end
     ]
     |> Task.async_stream(fn f -> f.() end)
