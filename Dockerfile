@@ -7,9 +7,8 @@ ADD mix.exs mix.lock Makefile $APPDIR/
 COPY . $APPDIR
 RUN make release
 
-FROM alpine:latest
+FROM alpine:3.9
 ENV APPDIR /app
-ENV REPLACE_OS_VARS true
 RUN mkdir $APPDIR
 WORKDIR $APPDIR
 RUN apk add --no-cache bash

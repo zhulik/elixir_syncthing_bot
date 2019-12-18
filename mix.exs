@@ -13,8 +13,7 @@ defmodule ElixirSyncthingBot.MixProject do
         elixir_syncthing_bot: [
           include_executables_for: [:unix],
           applications: [
-            runtime_tools: :permanent,
-            elixir_syncthing_bot: :permanent
+            runtime_tools: :permanent
           ]
         ]
       ]
