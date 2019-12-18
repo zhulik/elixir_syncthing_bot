@@ -23,7 +23,7 @@ run: elixir_syncthing_bot
 
 release: deps
 	mix local.rebar --force
-	MIX_ENV=prod mix distillery.release
+	MIX_ENV=prod mix release elixir_syncthing_bot --overwrite
 
 docker:
 	docker build -t docker.pkg.github.com/zhulik/elixir_syncthing_bot/elixir_syncthing_bot:latest .

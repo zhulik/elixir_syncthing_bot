@@ -8,7 +8,16 @@ defmodule ElixirSyncthingBot.MixProject do
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      aliases: aliases()
+      aliases: aliases(),
+      releases: [
+        elixir_syncthing_bot: [
+          include_executables_for: [:unix],
+          applications: [
+            runtime_tools: :permanent,
+            elixir_syncthing_bot: :permanent
+          ]
+        ]
+      ]
     ]
   end
 
@@ -28,7 +37,6 @@ defmodule ElixirSyncthingBot.MixProject do
       {:poison, "~> 4.0"},
       {:jason, "~> 1.1.2"},
       {:credo, "~> 1.1.5", only: [:dev, :test], runtime: false},
-      {:distillery, "~> 2.1", runtime: false},
       {:sentry, "~> 7.0"},
       {:exactor, "~> 2.2.4", warn_missing: false}
     ]

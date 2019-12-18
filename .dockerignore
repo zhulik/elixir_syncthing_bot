@@ -1,2 +1,7 @@
 /deps/*
 /_build/*
+Dockerfile
+/.git/
+/.github/
+/test/
+erl_crash.dump
