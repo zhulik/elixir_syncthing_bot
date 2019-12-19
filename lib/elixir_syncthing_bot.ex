@@ -19,7 +19,6 @@ defmodule ElixirSyncthingBot do
     {:ok, _} = Logger.add_backend(Sentry.LoggerBackend)
 
     opts = [strategy: :one_for_one, name: ElixirSyncthingBot.Supervisor]
-    :observer.start()
     Supervisor.start_link(children ++ server_supervisors(), opts)
   end
 
