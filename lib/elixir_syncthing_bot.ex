@@ -14,9 +14,9 @@ defmodule ElixirSyncthingBot do
 
     children = [
       {Registry, [keys: :unique, name: Registry.ElixirSyncthingBot]},
-      ServersSupervisor,
       FoldersState,
-      NotifierDispatcher.notifier(notifier, notifier_options)
+      NotifierDispatcher.notifier(notifier, notifier_options),
+      ServersSupervisor
     ]
 
     opts = [strategy: :one_for_one, name: ElixirSyncthingBot.Supervisor]
