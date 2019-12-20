@@ -1,0 +1,7 @@
+version: '3.7'
+services:
+  bot:
+    image: docker.pkg.github.com/zhulik/elixir_syncthing_bot/elixir_syncthing_bot:latest
+    restart: always
+    env_file:
+      - .env

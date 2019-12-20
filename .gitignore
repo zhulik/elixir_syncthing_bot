@@ -23,5 +23,5 @@ erl_crash.dump
 elixir_syncthing_bot-*.tar
 /elixir_syncthing_bot
 /config/dev.exs
-docker-compose.yml
+.env
 
